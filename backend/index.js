@@ -42,28 +42,30 @@ router.route('/students/:std_id')
     .get((req, res) => {
 
         let ID = students.list.findIndex( item => (item.id === +req.params.std_id))
-        if(+req.params.std_id !== +students.list[ID])
+        if(ID >= 0)
         {
-            res.json({status: "Fail, get not found!"})
+           res.json(students.list[ID])
         }
         else
-            res.json(students.list[ID])
+           res.json({status: "Fail, get not found!"})
     })
     .put((req, res) => {
 
         let ID = students.list.findIndex( item => ( item.id === +req.params.std_id))
     
-        if(+req.params.std_id !== +students.list[ID])
+        if(ID >= 0)
         {
-            res.json({status: "Fail, Student not found!"})
-        }
-        else
-        {
+
             students.list[ID].fname = req.body.fname
             students.list[ID].surname = req.body.surname
             students.list[ID].major = req.body.major
             students.list[ID].GPA = req.body.GPA
             res.json(students.list[ID])
+            
+        }
+        else
+        {
+            res.json({status: "Fail, Student not found!"})
         }
 
            
@@ -73,12 +75,13 @@ router.route('/students/:std_id')
         let ID = students.list.findIndex( item => ( item.id === +req.params.std_id))
 
         students.list = students.list.filter( item => item.id !== +req.params.std_id )
-        if(+req.params.std_id !== +students.list[ID])
+        if(ID >= 0)
         {
-            res.json({status: "Fail, Student not found!"})
+            res.json(students.list[ID])
+            
         }
         else
-            res.json(students.list[ID])
+            res.json({status: "Fail, Student not found!"})
 
     })
 
