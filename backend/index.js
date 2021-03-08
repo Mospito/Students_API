@@ -77,12 +77,13 @@ router.route('/students/:std_id')
         
         if(ID >= 0)
         {
+            students.list = students.list.filter( item => item.id !== +req.params.std_id )
             res.json(students.list[ID])
             
         }
         else
         {
-            students.list = students.list.filter( item => item.id !== +req.params.std_id )
+            
             res.json({status: "Fail, Student not found!"})
         }
             
