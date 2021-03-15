@@ -1,8 +1,20 @@
 const express = require('express');
 let bodyParser = require('body-parser');
+const cors = require('cors')
 const router = express.Router();
 const app = express();
 const PORT = 80;
+
+
+let user = { 'name': 'Jaturon', 'age': 20 }
+ 
+router.route('/users')
+   .get((req, res) => res.json(user))
+   .put((req, res) => {
+       user = { name: req.body.name, age: user.age }
+       res.json(user)
+   })
+
 
 let bears = { 
     list:[ {id: 1, name: "Winnie", weight: 50},
@@ -16,6 +28,7 @@ let students = {
     ]
 }
 
+app.use(cors())
 //app.use('/api', router)
 app.use('/api', bodyParser.json(), router);
 app.use('/api', bodyParser.urlencoded({ extended: false}), router)
@@ -101,7 +114,7 @@ router.route('/bears')
         let name = req.body.name;
         let weight = req.body.weight;
         bears = { list: [ ...bears.list, {id, name, weight}] }
-        res.json(bears.list)
+        res.json(bears)
     })
 
 router.route('/bears/:bear_id')
@@ -114,11 +127,11 @@ router.route('/bears/:bear_id')
         let id = bears.list.findIndex( (item) => (item.id === +req.params.bear_id) )
         bears.list[id].name = req.body.name
         bears.list[id].weight = req.body.weight
-        res.json(bears.list)
+        res.json(bears)
     })
     .delete( (req, res) => {
         bears.list =bears.list.filter( (item) => item.id !== +req.params.bear_id )
-        res.json(bears.list)
+        res.json(bears)
     })
 
 
