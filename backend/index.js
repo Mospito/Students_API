@@ -1,6 +1,9 @@
 const express = require('express');
 let bodyParser = require('body-parser');
-const cors = require('cors')
+const cors = require('cors');
+
+
+
 const router = express.Router();
 const app = express();
 const PORT = 80;
@@ -21,7 +24,15 @@ let bears = {
             {id: 2, name: "Pooh", weight: 60}
         ] 
     }
-
+//TestSWR
+let user1 = { 'fname': 'Ja', 'surname': 'Moo', 'major':'CoE', 'GPA': 2.2}
+router.route('/studentSWR')
+   .get((req, res) => res.json(user1))
+   .put((req, res) => {
+      user1 = { fname: req.body.fname, surname: user1.surname  , major: user1.major, GPA:user1.GPA  }
+       res.json(user1)
+   })
+//-------
 let students = {
     list: [
         {id: 1, fname: "Ja",surname: "Mo",major: "CoE", GPA: 2.2}
@@ -62,6 +73,7 @@ router.route('/students/:std_id')
         else
            res.json({status: "Fail, get not found!"})
     })
+ 
     .put((req, res) => {
 
         let ID = students.list.findIndex( item => ( item.id === +req.params.std_id))
@@ -73,7 +85,7 @@ router.route('/students/:std_id')
             students.list[ID].surname = req.body.surname
             students.list[ID].major = req.body.major
             students.list[ID].GPA = req.body.GPA
-            res.json(students.list[ID])
+            res.json(students)
             
         }
         else
@@ -82,7 +94,16 @@ router.route('/students/:std_id')
         }
 
            
-    })
+    }) 
+
+    // .put( (req,res) => {
+    //     user = { fname: req.body.fname, 
+    //              surname: user.surname, 
+    //              major: user.major,
+    //              GPA: user.GPA
+    //            }
+    //     res.json(user)
+    // })
     .delete((req, res) => {
 
         let ID = students.list.findIndex( item => ( item.id === +req.params.std_id))
@@ -91,7 +112,7 @@ router.route('/students/:std_id')
         if(ID >= 0)
         {
             students.list = students.list.filter( item => item.id !== +req.params.std_id )
-            res.json(students.list[ID])
+            res.json(students)
             
         }
         else

@@ -1,58 +1,53 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import useSWR, { mutate } from 'swr'
 
 
 const URL = `http://localhost/api/students`
-//const fetcher = url => axios.get(url).then(res => res.data)
+const fetcher = (URL) => axios.get(URL).then(res => res.data)
 
 export default function student() {
 
-    const [students, setStudents] = useState({
+    // const [students, setStudents] = useState({
 
-        list: [
-            {
-                id: 1,
-                fname: "Ja",
-                surname: "Mo",
-                major: "CoE",
-                GPA: 2.2
-            },
-            {
-                id: 2,
-                fname: "Foo",
-                surname: "Bar",
-                major: "CoC",
-                GPA: 2.4
-            },
-        ]
-    });
+    //     list: [
+    //         {
+    //             id: 1,
+    //             fname: "Ja",
+    //             surname: "Mo",
+    //             major: "CoE",
+    //             GPA: 2.2
+    //         },
+    //         {
+    //             id: 2,
+    //             fname: "Foo",
+    //             surname: "Bar",
+    //             major: "CoC",
+    //             GPA: 2.4
+    //         },
+    //     ]
+    // });
+    // useEffect(() => {
+    //     //getStudents()
+ 
+    // }, [])
 
-    //const { data, error } = useSWR(URL, fetcher)
-    // if(!data)
-    // {
-    //     return <div>Loading...</div>
-    // }
-    // if(error)
-    // {
-    //     return <div>failed to load</div>
-    // }
-    const [student, setStudent] = useState([])
+    const [student, setStudent] = useState('')
     const [fname, setFname] = useState('')
     const [surname, setSurname] = useState('')
     const [major, setMajor] = useState('')
     const [GPA, setGPA] = useState(0)
 
-    useEffect(() => {
-        getStudents()
-    }, [])
+    // const getStudents = async () => {
 
-    const getStudents = async () => {
+    //     let student = await axios.get(URL);
 
-        let student = await axios.get(URL);
+    //     setStudents(student.data);
+    // }
 
-        setStudents(student.data);
-    }
+    const { data, error } = useSWR(URL, fetcher)
+    if (!data) return <div>Loading...</div>
+    console.log('Home', data);
 
     const getStudent = async (id) => {
 
@@ -69,55 +64,69 @@ export default function student() {
     const addStudent = async (fname, surname, major, GPA) => {
 
         let students = await axios.post(URL, { fname, surname, major, GPA });
-        setStudents(students.data)
+        //setStudents(students.data)
+        mutate(URL)
     }
 
     const deleteStudent = async (id) => {
 
         let students = await axios.delete(`${URL}/${id}`)
-        setStudents(students.data)
+        //setStudents(students.data)
+        mutate(URL)
     }
 
     const updateStudent = async (id) => {
 
-        let students = await axios.put(`${URL}/${id}`, {fname, surname, major, GPA})
-        setStudents(students.data)
+        let students = await axios.put(`${URL}/${id}`, { fname, surname, major, GPA })
+        //setStudents(students.data)
+        mutate(URL)
     }
 
 
 
-    const printStudents = () => {
+    const printStudents = (students) => {
+        console.log('Students: ', students);
+        if (students && students.length)
+            return (students.map((student, index) =>
 
-        return students.list.map((item, index) =>
+            (<li key={index}>
 
-            <li key={index}>
-
-                {item.id}.
+                {/* {item.id}.
                 {item.fname}:
                 {item.surname}:
                 {item.major}:
-                {item.GPA}
+                {item.GPA} */}
+                
 
-                <button onClick={() => getStudent(item.id)}>Get</button>
-                <button onClick={() => updateStudent(item.id)}>Update</button>
-                <button onClick={()=> deleteStudent(item.id)}>Delete</button>
+                {(student) ? student.fname : '-'} :
+                {(student) ? student.surname : '-'} :
+                {(student) ? student.major : '-'} :
+                {(student) ? student.GPA : 0}
 
-            </li>
+                
+                <button onClick={() => getStudent(student.id)}>Get</button>
+                <button onClick={() => updateStudent(student.id)}>Update</button>
+                <button onClick={() => deleteStudent(student.id)}>Delete</button>
 
-        )
+            </li>)
+
+            ))
+        else 
+        {
+            (<h2>No Student</h2>)
+        }
 
 
     }
+    
 
 
 
 
     return (
 
-
-
         <div> Hello
-            {printStudents()}
+            <ul>{printStudents(data.list)} </ul>
             <ul>
                 name: {student.fname} :
                 surname: {student.surname} :
